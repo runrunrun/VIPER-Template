@@ -15,7 +15,7 @@ https://theswiftdev.com/viper-best-practices-for-ios-developers/
 
 # Generated Code
 
-Code genrated for a Login module.
+Code generated for a Login module.
 
 ### Contract
 ```LoginContract.swift```
