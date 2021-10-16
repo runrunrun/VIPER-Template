@@ -1,2 +1,117 @@
-# VIPER-Template
-Xcode template for VIPER
+# VIPER Template
+Xcode File Template for generating VIPER modules: View, Interactor, Presenter, and Router. Written in Swift 5
+
+# How To Install
+1. Clone the repository
+2. Navigate to Xcode Templates folder: ```~/Library/Developer/Xcode/Templates/```. If Templates folder doesn't exist, create it
+3. Copy and paste the VIPER Module.xctemplate in Templates folder
+
+# Use
+1. Open Xcode
+2. ```File -> New -> File``` or ```⌘ N```
+3. Scroll down till you see ```VIPER Module``` template and choose it.
+4. Set a name for your module. Examples: ```Home, Auth, SignIn```
+
+# Generated Code
+
+Let's suppose we wanted to create the Login module. Here's how it would look:
+
+### Contract
+```LoginContract.swift```
+```swift
+import Foundation
+
+// MARK: View
+protocol LoginViewRepresentable: AnyObject {
+    var presenter: LoginPresenterRepresentable? { get set }
+}
+
+// MARK: Presenter
+protocol LoginPresenterRepresentable: AnyObject {
+    var view: LoginViewRepresentable? { get set }
+    var interactor: LoginInteractorRepresentable? { get set }
+    var router: LoginRouterRepresentable? { get set }
+}
+
+// MARK: Interactor
+protocol LoginInteractorRepresentable: AnyObject {
+    var presenter: LoginPresenterRepresentable? { get set }
+}
+
+// MARK: Router
+protocol LoginRouterRepresentable: AnyObject {
+    var presenter: LoginPresenterRepresentable? { get set }
+}
+```
+
+### Module
+```LoginModule.swift```
+```swift
+import UIKit
+
+final class LoginModule {
+    func build() -> UIViewController {
+        let view = LoginView()
+        let interactor = LoginInteractor()
+        let presenter = LoginPresenter()
+        let router = LoginRouter()
+
+        view.presenter = presenter
+
+        presenter.interactor = interactor
+        presenter.view = view
+        presenter.router = router
+
+        interactor.presenter = presenter
+
+        router.presenter = presenter
+        router.viewController = view
+        
+        return view
+    }
+}
+```
+
+### View
+```LoginView.swift```
+```swift
+import UIKit
+
+final class LoginView: UIViewController, LoginViewRepresentable {
+    weak var presenter: LoginPresenterRepresentable?
+}
+```
+
+### Interactor
+```LoginInteractor.swift```
+```swift
+import Foundation
+
+final class LoginInteractor: LoginInteractorRepresentable {
+    weak var presenter: LoginPresenterRepresentable?
+}
+```
+
+### Presenter
+```LoginPresenter.swift```
+
+```swift
+import Foundation
+
+final class LoginPresenter: LoginPresenterRepresentable {
+    weak var view: LoginViewRepresentable?
+    var interactor: LoginInteractorRepresentable?
+    var router: LoginRouterRepresentable?
+}
+```
+
+### Router
+```LoginRouter.swift```
+```swift
+import UIKit
+
+final class LoginRouter: LoginRouterRepresentable {
+    weak var presenter: LoginPresenterRepresentable?
+    weak var viewController: UIViewController?
+}
+```
